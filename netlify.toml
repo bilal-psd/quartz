@@ -1,0 +1,6 @@
+[build]
+  command = "npx quartz plugin install && npm run quartz -- build"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22"
