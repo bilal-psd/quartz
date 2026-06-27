@@ -1,3 +1,891 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+// ============================================================================
+// CSS variables — extracted directly from digital-garden.html mockup
+// ============================================================================
+:root {
+  --bg: #0d0d0d;
+  --surface: #141414;
+  --border: #202020;
+  --muted: #3d3d3d;
+  --dim: #666666;
+  --text: #e8e6e0;
+  --text-soft: #9e9b94;
+  --amber: #c8a96e;
+  --green: #4a7c59;
+  --green-bright: #5a9e6f;
+  --red: #8b4040;
+
+  color-scheme: dark;
+}
+
+// ============================================================================
+// Force dark mode — override Quartz's light-mode :root defaults so the dark
+// palette is always active regardless of system preference or saved theme.
+// ============================================================================
+:root,
+:root[saved-theme="light"],
+:root[saved-theme="dark"] {
+  --light: #0d0d0d; // page background
+  --lightgray: #202020; // borders
+  --gray: #3d3d3d; // muted elements
+  --darkgray: #9e9b94; // soft text
+  --dark: #e8e6e0; // primary text
+  --secondary: #c8a96e; // amber accent — links, highlights
+  --tertiary: #5a9e6f; // green — hover states
+  --highlight: rgba(200, 169, 110, 0.08);
+  --textHighlight: #c8a96e44;
+}
+
+html {
+  background-color: var(--bg);
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+// ============================================================================
+// Typography — force JetBrains Mono everywhere. The !important overrides
+// Quartz's component-level font assignments and the fonts plugin layer.
+// ============================================================================
+:root {
+  --titleFont: "JetBrains Mono", monospace;
+  --bodyFont: "JetBrains Mono", monospace;
+  --headerFont: "JetBrains Mono", monospace;
+  --codeFont: "JetBrains Mono", monospace;
+  --font-text: "JetBrains Mono", monospace;
+  --font-monospace: "JetBrains Mono", monospace;
+  --h1-font: "JetBrains Mono", monospace;
+  --h2-font: "JetBrains Mono", monospace;
+  --h3-font: "JetBrains Mono", monospace;
+  --h4-font: "JetBrains Mono", monospace;
+  --h5-font: "JetBrains Mono", monospace;
+  --h6-font: "JetBrains Mono", monospace;
+}
+
+* {
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+body {
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+}
+
+// ============================================================================
+// Links — soft by default, amber on hover, no underline
+// ============================================================================
+a {
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: color 0.1s;
+
+  &:hover {
+    color: var(--amber);
+  }
+}
+
+// ============================================================================
+// Scrollbar
+// ============================================================================
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 2px;
+}
+
+// ============================================================================
+// GARDEN FRAME — bespoke layout replicating digital-garden.html
+// ============================================================================
+.page[data-frame="garden"] {
+  max-width: 1280px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.7;
+
+  & > #quartz-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "topbar topbar"
+      "sidebar main"
+      "footer footer";
+    column-gap: 0;
+    row-gap: 0;
+    padding: 0;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  // Article pages add a right column for graph / backlinks / toc
+  & > #quartz-body:has(.garden-right) {
+    grid-template-columns: 220px minmax(0, 1fr) 16rem;
+    grid-template-areas:
+      "topbar topbar topbar"
+      "sidebar main right"
+      "footer footer footer";
+  }
+}
+
+.garden-topbar {
+  grid-area: topbar;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 5;
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+
+  .topbar-path {
+    color: var(--amber);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .topbar-sep {
+    color: var(--muted);
+  }
+
+  .topbar-page {
+    color: var(--text-soft);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+
+  .topbar-right a {
+    color: var(--text-soft);
+  }
+  .topbar-right a:hover {
+    color: var(--amber);
+  }
+
+  .topbar-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--dim);
+  }
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  display: inline-block;
+  box-shadow: 0 0 6px var(--green);
+  animation: garden-pulse 3s ease-in-out infinite;
+}
+
+@keyframes garden-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────
+.garden-sidebar {
+  grid-area: sidebar;
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: relative;
+  overflow-y: auto;
+
+  // Keep only the search box from the default left components; hide the rest
+  .garden-sidebar-tools {
+    padding: 0 20px 8px;
+
+    .page-title,
+    .explorer,
+    .desktop-only,
+    .mobile-only,
+    .recent-notes {
+      display: none;
+    }
+
+    .search {
+      margin: 0;
+    }
+  }
+
+  .garden-nav {
+    .nav-section {
+      margin-bottom: 28px;
+      padding: 0 20px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 10px;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 20px 20px;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 12.5px;
+      color: var(--text-soft);
+      text-decoration: none;
+      transition:
+        background 0.1s,
+        color 0.1s;
+
+      &:hover {
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      &.active {
+        color: var(--amber);
+        background: rgba(200, 169, 110, 0.06);
+      }
+
+      &.active .tree-icon {
+        color: var(--amber);
+      }
+    }
+
+    .tree-icon {
+      color: var(--muted);
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .tree-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tree-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+  }
+}
+
+// ── Main ───────────────────────────────────────────────────────────────────
+.garden-main {
+  grid-area: main;
+  padding: 52px 60px 80px;
+  min-width: 0;
+
+  .center {
+    max-width: 100%;
+  }
+}
+
+.garden-section {
+  margin-bottom: 60px;
+}
+
+.garden-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  color: var(--dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  &:hover {
+    color: var(--amber);
+  }
+}
+
+// Hero
+.hero {
+  margin-bottom: 72px;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+
+  .prompt {
+    color: var(--green-bright);
+  }
+}
+
+.hero-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 20px;
+
+  .line2 {
+    display: block;
+    color: var(--amber);
+    font-weight: 500;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  color: var(--amber);
+  font-weight: 400;
+  animation: garden-blink 1.1s step-end infinite;
+}
+
+@keyframes garden-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.hero-desc {
+  font-size: 13px;
+  color: var(--text-soft);
+  max-width: 520px;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+// Rendered index.md body inside the hero
+.hero-desc-wrap {
+  max-width: 520px;
+  margin-bottom: 28px;
+
+  article,
+  .popover-hint,
+  .markdown-preview-view,
+  .markdown-rendered {
+    margin: 0;
+    padding: 0;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.8;
+    margin: 0;
+  }
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-size: 11.5px;
+  color: var(--dim);
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-meta-item .k {
+    color: var(--text-soft);
+  }
+  .hero-meta-item .v {
+    color: var(--amber);
+  }
+}
+
+// Section header
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-count {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+// Notes grid
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  border: 1px solid var(--border);
+  background: var(--border);
+}
+
+.note-card {
+  background: var(--bg);
+  padding: 22px 24px;
+  text-decoration: none;
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--surface);
+  }
+}
+
+.note-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.tag-llm {
+  color: var(--amber);
+}
+.tag-system {
+  color: var(--green-bright);
+}
+.tag-craft {
+  color: #7a8fc0;
+}
+.tag-infra {
+  color: #a07cc0;
+}
+.tag-default {
+  color: var(--text-soft);
+}
+
+.note-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.note-preview {
+  font-size: 12px;
+  color: var(--text-soft);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-footer {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.note-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .link-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+
+  .note-links-count {
+    margin-left: 4px;
+    font-size: 10px;
+  }
+}
+
+// Recently tended
+.tended-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+}
+
+.tended-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  text-decoration: none;
+  transition: background 0.1s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: var(--surface);
+  }
+}
+
+.tended-date {
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.tended-name {
+  color: var(--text);
+}
+
+.tended-action {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.action-planted {
+  color: var(--green-bright);
+  background: rgba(74, 124, 89, 0.12);
+  border: 1px solid rgba(74, 124, 89, 0.25);
+}
+
+.action-tended {
+  color: var(--amber);
+  background: rgba(200, 169, 110, 0.08);
+  border: 1px solid rgba(200, 169, 110, 0.2);
+}
+
+.action-evergreen {
+  color: #7a8fc0;
+  background: rgba(122, 143, 192, 0.08);
+  border: 1px solid rgba(122, 143, 192, 0.2);
+}
+
+// Tag pages — restyle the default tag-page plugin markup inside the garden frame.
+body[data-slug^="tags"] .page[data-frame="garden"] .garden-main {
+  .page-header {
+    margin: 0 0 24px;
+
+    .article-title {
+      color: var(--text);
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 500;
+      line-height: 1.35;
+      margin: 0 0 10px;
+    }
+
+    .content-meta {
+      color: var(--dim);
+      font-size: 11px;
+    }
+
+    .breadcrumbs {
+      color: var(--dim);
+      font-size: 11px;
+      margin-bottom: 18px;
+
+      a {
+        color: var(--text-soft);
+
+        &:hover {
+          color: var(--amber);
+        }
+      }
+    }
+  }
+
+  .page-listing {
+    margin-top: 24px;
+
+    > p {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 11px;
+
+      &::before {
+        content: "notes";
+        color: var(--dim);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+    }
+  }
+
+  h2 {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0 0 8px;
+
+    .tag-link {
+      color: var(--text);
+
+      &:hover {
+        color: var(--amber);
+      }
+    }
+  }
+
+  .section-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+
+  .section-li {
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .section {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 20px;
+    align-items: baseline;
+    padding: 14px 20px;
+    transition: background 0.1s;
+
+    &:hover {
+      background: var(--surface);
+    }
+
+    .meta {
+      color: var(--dim);
+      font-size: 11px;
+      margin: 0;
+    }
+
+    .desc h3 {
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 1.4;
+      margin: 0;
+
+      a {
+        color: var(--text);
+
+        &:hover {
+          color: var(--amber);
+        }
+      }
+    }
+
+    > .tags {
+      grid-column: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+
+      li {
+        margin: 0;
+      }
+
+      .tag-link {
+        color: var(--amber);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+
+        &::before {
+          content: "#";
+          color: var(--muted);
+        }
+      }
+    }
+  }
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────
+.garden-footer {
+  grid-area: footer;
+  border-top: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--dim);
+
+  a {
+    color: var(--dim);
+    &:hover {
+      color: var(--amber);
+    }
+  }
+
+  .footer-sep {
+    margin: 0 8px;
+    color: var(--muted);
+  }
+  .footer-link-item {
+    display: inline;
+  }
+  .footer-copy {
+    color: var(--muted);
+  }
+}
+
+// ── Right sidebar (article pages) ──────────────────────────────────────────
+.garden-right {
+  grid-area: right;
+  padding: 52px 28px 80px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+// ── Responsive ─────────────────────────────────────────────────────────────
+@media (max-width: 700px) {
+  .page[data-frame="garden"] > #quartz-body,
+  .page[data-frame="garden"] > #quartz-body:has(.garden-right) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "main"
+      "footer";
+  }
+
+  .garden-sidebar {
+    display: none;
+  }
+
+  .garden-right {
+    display: none;
+  }
+
+  .garden-main {
+    padding: 32px 20px 60px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tended-row {
+    grid-template-columns: 1fr auto;
+
+    .tended-date {
+      display: none;
+    }
+  }
+}
+
+// ============================================================================
+// Graph view — compact widget, not a full-page element (doc step 6)
+// ============================================================================
+.graph {
+  > h3 {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  > .graph-outer {
+    height: 200px;
+    max-height: 200px;
+    margin: 0.25em 0;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+}
+
+// ============================================================================
+// Hide leftover toolbar buttons (plugins disabled, but belt-and-suspenders)
+// ============================================================================
+.darkmode,
+.readermode,
+.reader-mode {
+  display: none !important;
+}
