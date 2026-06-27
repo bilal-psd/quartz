@@ -32,6 +32,9 @@ export const GardenFrame: PageFrame = {
     const slug = componentData.fileData.slug as string | undefined
     const isHome = slug === "index"
     const isAllNotes = slug === "all-notes"
+    const tags = (componentData.fileData.frontmatter?.tags ?? []) as string[]
+    const backTarget = tags.length > 0 ? `/tags/${tags[0]}` : "/all-notes"
+    const backLabel = tags.length > 0 ? tags[0] : "all notes"
 
     return (
       <>
@@ -58,11 +61,8 @@ export const GardenFrame: PageFrame = {
           ) : (
             <div class="center">
               <div class="page-header">
-                <a
-                  class="garden-back"
-                  href="javascript:history.length>1?history.back():location.href='/all-notes'"
-                >
-                  ← back
+                <a class="garden-back" href={backTarget}>
+                  ← {backLabel}
                 </a>
                 <Header {...componentData}>
                   {header.map((HeaderComponent) => (
