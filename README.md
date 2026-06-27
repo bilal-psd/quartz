@@ -40,4 +40,3 @@ npm run check
 - Movie and shows tracker / review
 
 Upstream Quartz documentation: https://quartz.jzhao.xyz/
-
