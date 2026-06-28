@@ -32,6 +32,8 @@ export const GardenFrame: PageFrame = {
     const slug = componentData.fileData.slug as string | undefined
     const isHome = slug === "index"
     const isAllNotes = slug === "all-notes"
+    const isTagPage = slug === "tags" || slug?.startsWith("tags/")
+    const showBackLink = !isHome && !isAllNotes && !isTagPage
     const tags = (componentData.fileData.frontmatter?.tags ?? []) as string[]
     const backTarget = tags.length > 0 ? `/tags/${tags[0]}` : "/all-notes"
     const backLabel = tags.length > 0 ? tags[0] : "all notes"
@@ -61,9 +63,11 @@ export const GardenFrame: PageFrame = {
           ) : (
             <div class="center">
               <div class="page-header">
-                <a class="garden-back" href={backTarget}>
-                  ← {backLabel}
-                </a>
+                {showBackLink && (
+                  <a class="garden-back" href={backTarget}>
+                    ← {backLabel}
+                  </a>
+                )}
                 <Header {...componentData}>
                   {header.map((HeaderComponent) => (
                     <HeaderComponent {...componentData} />
